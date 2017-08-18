@@ -1,9 +1,11 @@
-const session = require('koa-generic-session');
-const redis   = require('koa-redis');
-const { redis: redis_options }  = require('../config');
+const session   = require('koa-generic-session');
+const koa_redis = require('koa-redis');
+const redis_options = require('../configs/redis');
 
-const session_middleware = session({
-  store: redis(redis_options),
-});
+function getSessionMiddleware() {
+  return session({
+    store: koa_redis(redis_options),
+  });
+}
 
-exports = module.exports = session_middleware;
+exports = module.exports = getSessionMiddleware;

@@ -1,3 +1,16 @@
+# 前后端对接文档
+
+## 1. HTTP状态码
+code | msg                   | description
+---- | --------------------- | -----------
+0    | SERVER_INTERNAL_ERROR | 服务器内部错误
+1    | OK                    | 一切正常
+2    |                       | 数据格式出错
+3    | USER_NOT_EXIST        | 用户不存在
+4    | USER_ALREADY_EXIST    | 用户已存在
+5    | WRONG_PASSWORD        | 密码错误
+
+
 1.获取平台基金列表(分页)：
 request：
 {

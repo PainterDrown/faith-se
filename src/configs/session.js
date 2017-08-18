@@ -1,5 +1,6 @@
 const KoaRedis = require('koa-redis');
 const { redis: redis_options } = require('./redis');
+const FaithError = require('../utils/FaithError');
 
 const session_options = {
   key: 'faith-session-id',

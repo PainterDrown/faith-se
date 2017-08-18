@@ -1,11 +1,21 @@
 const Koa = require('koa');
-const app = new Koa();
 const { loadMiddlewares } = require('./middlewares');
 const { loadRouters }     = require('./routers');
-const { logger }          = require('./utils');
+const logger              = require('./utils/logger');
+const tester              = require('./utils/tester');
 
-loadMiddlewares(app);
-loadRouters(app);
+async function bootstrap() {
+  try {
+    await tester.testMysql();
+    await tester.testRedis();
+    const app = new Koa();
+    loadMiddlewares(app);
+    loadRouters(app);
+    app.listen(3000);
+    logger.log('服务端程序启动成功');
+  } catch(err) {
+    logger.error(err);
+  }
+}
 
-app.listen(3000);
-logger.logMessage('服务端启动成功！');
+bootstrap();

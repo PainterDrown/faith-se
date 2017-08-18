@@ -1,9 +1,9 @@
 class FaithError extends Error {
-  constructor(code, name, err) {
-    super(err.msg);
+  constructor(code, msg, stack) {
+    super(msg);
+    this.msg = msg;
     this.code = code;
-    this.name = name;
-    this.stack = err.stack;
+    this.stack = stack;
   }
 }
 

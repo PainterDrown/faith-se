@@ -1,15 +1,17 @@
-// 暂时用console
-const logger = console;
+const FaithError = require('./FaithError');
+const logger = {};
 
-logger.logMessage = (...rest) => {
-  const time = new Date();
-  logger.log(...rest);
+logger.log = (msg) => {
+  const time = new Date().toLocaleString();
+  console.log(`${time}    [1]✅ ${msg}`);
 }
 
-logger.logError = (err, ...rest) => {
-  if (typeof err !== Error) return;
-  const time = new Date();
-  logger.error(time, err.name, err.message, err.stack, ...rest);
+logger.error = (err) => {
+  const time = new Date().toLocaleString();
+  if (err.code === -1)
+    console.error(`${time}    [${err.code}]❌ ${err.msg}`);
+  else
+    console.error(`${time}    [${err.code}]⚠️ ${err.msg}`);
 }
 
 exports = module.exports = logger;
