@@ -15,7 +15,6 @@ async function checkIfUserExistByUsername(param_data) {
 }
 
 async function checkIfUserNotExistByUsername(param_data) {
-  console.log(param_data);
   try {
     const user = await UserModel.findUsersByUsernames([param_data.username]);
     if (user.length > 0)
