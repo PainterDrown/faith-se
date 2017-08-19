@@ -7,6 +7,10 @@ logger.log = (msg) => {
 }
 
 logger.error = (err) => {
+  if (!(err instanceof FaithError)) {
+    err.code = 0;
+    err.msg = err.stack;
+  }
   const time = new Date().toLocaleString();
   if (err.code === -1)
     console.error(`${time}    [${err.code}]❌ ${err.msg}`);

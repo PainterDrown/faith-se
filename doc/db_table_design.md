@@ -15,32 +15,36 @@ bankcard_no   | VARCHAR(19)  |         | 银行卡号（信用卡16位，储蓄�
 email         | VARCHAR(64)  |         | 邮箱
 is_auth       | TINYINT      | 0       | 是否已实名认证（0表示否，1表示是）
 savings       | FLOAT(10, 2) | 0.00    | 储蓄罐金额
+total_asset   | FLOAT(10, 2) | 0.00    | 总资产
+total_profit  | FLOAT(10, 2) | 0.00    | 总收益
 
-## 2. fund
+## 2. fund_company
+fieldname | type        | default | description
+--------- | ----------- | ------- | -----------
+fc_id     | INT         |         | 基金公司ID
+name      | VARCHAR(64) |         | 名称
+
+## 3. fund
 fieldname | type | default | description
 --------- | ---- | ------- | -----------
 fund_id   | INT  |         | 基金ID
 fc_id     | INT  |         | 基金公司ID（外键->fund_company）
 founddate | DATE |         | 基金成立日期
 
-## 3. fund_buy
+## 4. fund_buy
 fieldname | type         | default | description
 --------- | ------------ | ------- | -----------
 fb_id     | INT          |         | 基金拥有关系ID
 user_id   | INT          |         | 用户ID（外键->user）
-date      | DATE         |         | 购买基金日期
-cost      | FLOAT(10, 2) |         | 购买基金金额
+fund_id   | INT          |         | 基金ID（外键->fund）
+time      | DATETIME     |         | 购买基金日期
+price     | FLOAT(10, 2) |         | 购买基金金额
 amount    | INT          |         | 购买基金份数
-
-## 4. fund_company
-fieldname | type        | default | description
---------- | ----------- | ------- | -----------
-fc_id     | INT         |         | 基金公司ID
-name      | VARCHAR(64) |         | 名称
 
 ## 5. fund_netvalue
 fieldname | type         | default | description
 --------- | ------------ | ------- | -----------
 fn_id     | INT          |         | 基金净值ID
+fund_id   | INT          |         | 基金ID（外键->fund）
 date      | DATE         |         | 产生该净值的日期（每个季度末）
 netvalue  | FLOAT(10, 2) |         | 基金净值

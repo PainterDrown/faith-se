@@ -5,6 +5,8 @@ const sendJson    = require('../utils/sendJson');
 
 async function checkIfUserExistByUsername(param_data) {
   try {
+    console.log(param_data);
+    console.log(typeof param_data.username);
     const user = await UserModel.findUsersByUsernames([param_data.username]);
     if (user.length < 1)
       throw new FaithError(3, '用户不存在');
@@ -30,14 +32,14 @@ function checkIfPasswordCorrect(param_data) {
 }
 
 function loginSuccessfully(ctx, next) {
-  sendJson(ctx, { user: ctx.param_data.user });
+  sendJson(ctx, { user_id: ctx.param_data.user.user_id });
   return next();
 }
 
 async function enrollSuccessfully(ctx, next) {
   await UserModel.insertUser(ctx.param_data);
   const user = await UserModel.findUsersByUsernames(ctx.param_data.username);
-  sendJson(ctx, { user: user[0] });
+  sendJson(ctx, { user_id: user[0].user_id });
   return next();
 }
 

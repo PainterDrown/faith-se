@@ -12,7 +12,7 @@ function loadMiddlewares(app) {
   app.use(kosJson);        // 处理response传回的JSON数据
   // 自己的中间件
   app.use(handleError);             // 处理错误
-  app.use(getSessionMiddleware());  // session
+  app.use(getSessionMiddleware(app));  // session
   app.use(initParam);               // 预处理request的参数数据
 }
 

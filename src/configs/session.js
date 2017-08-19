@@ -8,7 +8,7 @@ const session_options = {
   secure: false,   // 如果为true，则只允许https传输
   secret: 'wo-yao-chen-wei-yi-ge-cheng-gong-de-da-qi-ye-jia',
   path: '/',
-  maxAge: 24 * 60 * 60 * 1000,
+  maxAge: 7 * 24 * 60 * 60 * 1000,  // 一周
   store: new KoaRedis(redis_options),
 };
 

@@ -3,7 +3,7 @@ const { getValidatorByRoute } = require('../services/validation');
 const toMiddleware = require('../utils/toMiddleware');
 const user_ctrl = require('../controllers/user');
 
-const router = new Router();
+const router = new Router({ prefix: '/api' });
 
 // 登陆
 router.post('/login',
@@ -19,5 +19,8 @@ router.post('/enroll',
   toMiddleware(user_ctrl.checkIfUserNotExistByUsername),
   user_ctrl.enrollSuccessfully
 );
+
+// 获取用户详情
+router.post('/get-user-detail');
 
 exports = module.exports = router.routes();
