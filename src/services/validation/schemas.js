@@ -24,6 +24,7 @@ function generateSchema(type, lowerbound, upperbound, regex) {
 
 const username = generateSchema('string', 6, 32);
 const password = generateSchema('string', 1, 32);
+const user_id  = generateSchema('number', 1, null);
 
 exports = module.exports = {
   username,

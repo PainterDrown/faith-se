@@ -3,6 +3,7 @@ const { loadMiddlewares } = require('./middlewares');
 const { loadRouters }     = require('./routers');
 const logger              = require('./utils/logger');
 const tester              = require('./utils/tester');
+const server_config      = require('./configs/server');
 
 async function bootstrap() {
   try {
@@ -11,8 +12,11 @@ async function bootstrap() {
     const app = new Koa();
     loadMiddlewares(app);
     loadRouters(app);
-    app.listen(3000);
-    logger.log('服务端程序启动成功');
+    app.on('error', (err) => {
+      logger.error(err);
+    });
+    app.listen(server_config.port);
+    logger.log(`服务端程序正在监听${server_config.port}端口`);
   } catch(err) {
     logger.error(err);
   }

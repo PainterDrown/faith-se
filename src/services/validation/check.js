@@ -4,9 +4,10 @@ const getChineseName = require('./getChineseName');
 function check(fieldname, data) {
   const schema = require('./schemas')[fieldname];
   const chinese_name = getChineseName(fieldname);
-  if (typeof data !== schema.type) {
+  if (data === null || data === undefined)
+    throw new FaithError(6, `缺乏参数：${chinese_name}`);
+  if (typeof data !== schema.type) 
     throw new FaithError(2, `${chinese_name}类型不对`);
-  }
   if (schema.type === 'string') {
     if (schema.min_length && data.length < schema.min_length)
       throw new FaithError(2, `${chinese_name}太短`);

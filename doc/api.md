@@ -9,6 +9,7 @@ code | msg
 3    | 用户不存在
 4    | 用户已存在
 5    | 密码错误
+6    | 缺乏参数
 
 ## 2. API对接文档
 
@@ -33,11 +34,21 @@ code | msg
 	- req:
 		- user_id
 	- res:
-		- total_asset（总资产）
-		- total_fund_cost（购买基金总金额）
-		- owned_funds（拥有的基金）：
-			- [fund_id]（array类型，数组成员为number类型）
-
+		- user
+			- usernama
+			- is_auth  {boolean}
+			- realname
+			- phone
+			- email
+			- address
+			- id
+			- bankname
+			- bankarea
+			- bankcard_no
+			- savings
+			- total_asset（总资产）
+			- total_fund_cost（购买基金总金额）
+			- owned_funds  {[number]}（拥有的基金，数组成员表示fund_id）
 
 ### 1.4 实名认证
 	- url: api/realname-authentication
@@ -51,7 +62,7 @@ code | msg
 		- bankarea
 		- bankcard_no
 		- tcode
-	- res（无）
+	- res:
 
 ### 2.1 获取平台基金列表(分页)
 	- url: api/get-fund-list

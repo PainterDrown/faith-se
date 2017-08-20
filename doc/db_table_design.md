@@ -6,14 +6,16 @@ fieldname     | type         | default | description
 user_id       | INT          |         | 用户ID（从0开始自增）
 username      | VARCHAR(32)  |         | 用户名
 password      | VARCHAR(32)  |         | 密码
-tcode         | INT          |         | 交易密码（6位整数）
+is_auth       | TINYINT      | 0       | 是否已实名认证（0表示否，1表示是）
 realname      | VARCHAR(32)  |         | 真实姓名
 phone         | CHAR(11)     |         | 手机号码
+email         | VARCHAR(64)  |         | 邮箱
 address       | TINYTEXT     |         | 住址
 id            | CHAR(18)     |         | 身份证号码
+bankname      | VARCHAR(64)  |         | 银行名称
+bankarea      | TINTTEXT     |         | 开户行
 bankcard_no   | VARCHAR(19)  |         | 银行卡号（信用卡16位，储蓄卡19位）
-email         | VARCHAR(64)  |         | 邮箱
-is_auth       | TINYINT      | 0       | 是否已实名认证（0表示否，1表示是）
+tcode         | INT          |         | 交易密码（6位整数）
 savings       | FLOAT(10, 2) | 0.00    | 储蓄罐金额
 total_asset   | FLOAT(10, 2) | 0.00    | 总资产
 total_profit  | FLOAT(10, 2) | 0.00    | 总收益

@@ -1,7 +1,7 @@
 const Router = require('koa-router');
-const { getValidatorByRoute } = require('../services/validation');
+const { getValidatorByRoute, getValidatorByFieldnames } = require('../services/validation');
 const toMiddleware = require('../utils/toMiddleware');
-const user_ctrl = require('../controllers/user');
+const user_ctrl    = require('../controllers/user');
 
 const router = new Router({ prefix: '/api' });
 
@@ -21,6 +21,9 @@ router.post('/enroll',
 );
 
 // 获取用户详情
-router.post('/get-user-detail');
+router.post('/get-user-detail',
+  toMiddleware(getValidatorByFieldnames(['user_id'])),
+  user_ctrl.getUserDetail
+);
 
 exports = module.exports = router.routes();

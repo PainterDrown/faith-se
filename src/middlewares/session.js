@@ -1,4 +1,3 @@
-// const session   = require('koa-generic-session');
 const session   = require('koa-session');
 const koa_redis = require('koa-redis');
 const session_options = require('../configs/session')
