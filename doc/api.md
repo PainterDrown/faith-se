@@ -85,7 +85,7 @@ code | msg
 	- req:
 		- fund_id
 	- res:
-		- netvalues（最新的4个基金净值，最新的在第一个）
+		- netvalues  {[number]}（最新的4个基金净值，最新的在第一个）
 		- dates（对应的基金净值日期）
 		- raise_percentages（近3个月，6个月，9个月，1年的涨跌幅）
 		- profit_rate（近3个月，6个月，9个月，1年的回报率）
@@ -95,7 +95,7 @@ code | msg
 	- req:
 		- num
 	- res:
-		- funds(array类型)
+		- funds  {[object]}
 			- fund_id
 			- name
 			- forecast_profit_rate
