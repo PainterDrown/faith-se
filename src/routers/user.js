@@ -1,5 +1,6 @@
 const Router = require('koa-router');
-const { getValidatorByRoute, getValidatorByFieldnames } = require('../services/validation');
+const { getValidatorByFieldnames,
+        getValidatorByRoute } = require('../services/validation');
 const toMiddleware = require('../utils/toMiddleware');
 const user_ctrl    = require('../controllers/user');
 
@@ -7,7 +8,7 @@ const router = new Router({ prefix: '/api' });
 
 // 登陆
 router.post('/login',
-  toMiddleware(getValidatorByRoute('/login')),
+toMiddleware(getValidatorByFieldnames(['username', 'password'])),
   toMiddleware(user_ctrl.checkIfUserExistByUsername),
   toMiddleware(user_ctrl.checkIfPasswordCorrect),
   user_ctrl.loginSuccessfully
@@ -15,8 +16,8 @@ router.post('/login',
 
 // 注册
 router.post('/enroll',
-  toMiddleware(getValidatorByRoute('/enroll')),
-  toMiddleware(user_ctrl.checkIfUserNotExistByUsername),
+  toMiddleware(getValidatorByFieldnames(['username', 'password'])),
+  toMiddleware(user_ctrl.checkIfUnique(['username'])),
   user_ctrl.enrollSuccessfully
 );
 
@@ -24,6 +25,12 @@ router.post('/enroll',
 router.post('/get-user-detail',
   toMiddleware(getValidatorByFieldnames(['user_id'])),
   user_ctrl.getUserDetail
+);
+
+// 实名认证
+router.post('/realname-authentication',
+  toMiddleware(getValidatorByRoute('/realname-authentication')),
+  user_ctrl.checkIfUnique(['id', 'email', 'phone', 'bankcard_no'])
 );
 
 exports = module.exports = router.routes();

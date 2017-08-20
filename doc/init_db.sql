@@ -13,8 +13,6 @@ CREATE TABLE user(
   bankcard_no  VARCHAR(19),
   tcode        INT,
   savings      FLOAT(10, 2) DEFAULT 0.00,
-  total_asset  FLOAT(10, 2) DEFAULT 0.00,
-  total_profit FLOAT(10, 2) DEFAULT 0.00,
   PRIMARY KEY(user_id)
 );
 
@@ -37,7 +35,7 @@ CREATE TABLE fund_buy(
   user_id INT          NOT NULL,
   fund_id INT          NOT NULL,
   time    DATETIME     NOT NULL,
-  price   FLOAT(10, 2) NOT NULL,
+  cost    FLOAT(10, 2) NOT NULL,
   amount  INT          NOT NULL,
   PRIMARY KEY(fb_id),
   FOREIGN KEY(user_id) REFERENCES user(user_id),

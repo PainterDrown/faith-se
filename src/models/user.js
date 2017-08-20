@@ -2,9 +2,12 @@ const { queryDb } = require('../services/db');
 
 function findUsersBySomeField(fieldname, fieldvalues) {
   const sql = `
-  SELECT *
-  FROM   user
-  WHERE  user.${fieldname} IN (?)
+  SELECT
+    *
+  FROM
+    user
+  WHERE
+    user.${fieldname} IN (?)
   ;`;
   const values = [fieldvalues];
   return queryDb(sql, values);

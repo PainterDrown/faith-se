@@ -11,10 +11,11 @@ async function testMysql() {
     conn.connect(function(err) {
       if (err) {
         reject(new FaithError(0, 'MySQL数据库连接失败', err.stack));
+      } else {
+        logger.log('MySQL数据库连接成功');
+        conn.destroy();
+        resolve();
       }
-      logger.log('MySQL数据库连接成功');
-      conn.destroy();
-      resolve();
     });
   });
 }
