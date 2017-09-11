@@ -10,6 +10,7 @@ async function testMysql() {
     const conn = mysql.createConnection(mysql_options);
     conn.connect(function(err) {
       if (err) {
+        console.log(err);
         reject(new FaithError(0, 'MySQL数据库连接失败', err.stack));
       } else {
         logger.log('MySQL数据库连接成功');
