@@ -13,7 +13,7 @@ pool.on('error', (err) => {
 });
 
 /**
- * 查询结果永远是[Object]
+ * 查询结果永远是[object]
  * @param  {string}   sql    sql语句
  * @param  {[string]} values sql参数
  * @return {[object]}        查询结果

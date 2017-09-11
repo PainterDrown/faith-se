@@ -1,11 +1,11 @@
 const { queryDb } = require('../services/db');
 
-function findFundsByUserId(user_id) {
+function findFundBuysByUserId(user_id) {
   const sql = `
   SELECT
     fb.*
   FROM
-    user
+    user,
     fund_buy AS fb
   WHERE
     fb.user_id = ? AND
@@ -16,5 +16,5 @@ function findFundsByUserId(user_id) {
 }
 
 exports = module.exports = {
-  findFundsByUserId,
+  findFundBuysByUserId,
 };

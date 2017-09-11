@@ -10,7 +10,7 @@ function toMiddleware(func) {
   if (typeof func !== 'function') 
     throw new FaithError(0, '传入的参数类型不是function');
   return async (ctx, next) => {
-    await func(ctx.param_data);
+    await func(ctx.param);
     return next();
   };
 }

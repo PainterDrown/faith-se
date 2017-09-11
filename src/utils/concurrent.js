@@ -1,10 +1,8 @@
-async function concurrent(tasks) {
+async function concurrent(...tasks) {
   const results = [];
   for (let i = 0; i < tasks.length; ++i) {
     results.push(null);
-  }
-  for (let i = 0; i < tasks.length; ++i) {
-    task.then((result) => {
+    tasks[i].then((result) => {
       results[i] = result;
     });
   }

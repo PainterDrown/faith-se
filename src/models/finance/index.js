@@ -120,3 +120,12 @@ function calculateInvestmentIncome(stock_income, bond_income) {
 function calculateIntervalRewardRate(Nb, Ne) {
   return (Ne / Nb) - 1;
 }
+
+// test
+function calculate() {
+  return 0.22;
+}
+
+exports = module.exports = {
+  calculate,
+};

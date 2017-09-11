@@ -1,36 +1,47 @@
 const Router = require('koa-router');
-const { getValidatorByFieldnames,
-        getValidatorByRoute } = require('../services/validation');
 const toMiddleware = require('../utils/toMiddleware');
-const user_ctrl    = require('../controllers/user');
+const { catchParam } = require('../utils');
+const uc = require('../controllers/user');
+const validators = require('../services/validation/validators');
 
-const router = new Router({ prefix: '/api' });
+function userRoutes() {
+  const router = new Router();
+  router.get('/', uc.detail);
+  return router.routes();
+}
+
+const router = new Router({ prefix: '/api/users' });
+
+// 捕获user_id参数
+router.param('user_id',
+  catchParam('user_id'),
+  toMiddleware(validators.getValidatorByFieldnames(['user_id']))
+);
+
+// RESTful路由
+router.use('/:user_id', userRoutes());
 
 // 登陆
 router.post('/login',
-toMiddleware(getValidatorByFieldnames(['username', 'password'])),
-  toMiddleware(user_ctrl.checkIfUserExistByUsername),
-  toMiddleware(user_ctrl.checkIfPasswordCorrect),
-  user_ctrl.loginSuccessfully
+  toMiddleware(validators.getValidatorByFieldnames(['username', 'password'])),
+  toMiddleware(uc.checkIfExist(['username'])),
+  toMiddleware(uc.checkIfCorrect(['password'])),
+  uc.login
 );
 
 // 注册
 router.post('/enroll',
-  toMiddleware(getValidatorByFieldnames(['username', 'password'])),
-  toMiddleware(user_ctrl.checkIfUnique(['username'])),
-  user_ctrl.enrollSuccessfully
-);
-
-// 获取用户详情
-router.post('/get-user-detail',
-  toMiddleware(getValidatorByFieldnames(['user_id'])),
-  user_ctrl.getUserDetail
+  toMiddleware(validators.getValidatorByFieldnames(['username', 'password'])),
+  toMiddleware(uc.checkIfUnique(['username'])),
+  uc.enroll
 );
 
 // 实名认证
-router.post('/realname-authentication',
-  toMiddleware(getValidatorByRoute('/realname-authentication')),
-  user_ctrl.checkIfUnique(['id', 'email', 'phone', 'bankcard_no'])
+router.post('/certificate',
+  toMiddleware(validators.getValidatorByRoute('/certificate')),
+  toMiddleware(uc.checkIfExist(['user_id'])),
+  toMiddleware(uc.checkIfUnique(['id', 'bank_phone', 'bank_cardno'])),
+  uc.certificate
 );
 
 exports = module.exports = router.routes();

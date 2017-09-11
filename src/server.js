@@ -1,11 +1,11 @@
 const Koa = require('koa');
 const { loadMiddlewares } = require('./middlewares');
-const { loadRouters }     = require('./routers');
-const logger              = require('./utils/logger');
-const tester              = require('./utils/tester');
-const server_config      = require('./configs/server');
+const { loadRouters } = require('./routers');
+const logger = require('./utils/logger');
+const tester = require('./utils/tester');
+const server_config = require('./configs/server');
 
-async function bootstrap() {
+(async function bootstrap() {
   try {
     await tester.testMysql();
     await tester.testRedis();
@@ -20,6 +20,4 @@ async function bootstrap() {
   } catch(err) {
     logger.error(err);
   }
-}
-
-bootstrap();
+})();

@@ -1,9 +1,7 @@
-function sendJson(ctx, obj) {
+function sendJson(ctx, obj, code, msg) {
   ctx.body = Object.assign({}, obj);
-  if (!obj.code) {
-    ctx.body.code = 1;
-    ctx.body.msg = 'ok';
-  }
+  ctx.body.code = code ? code : 1;
+  ctx.body.msg  = msg  ? msg  : 'ok';
 }
 
 exports = module.exports = sendJson;

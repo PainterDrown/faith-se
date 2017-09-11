@@ -9,10 +9,9 @@ async function handleError(ctx, next) {
     await next();
   } catch (err) {
     logger.error(err);
-    sendJson(ctx, {
-      code: err.code,
-      msg:  err.code === 0 ? '服务器内部错误' : err.msg,
-    });
+    const code = err.code ? err.code : 0;
+    const msg  = code !== 0 ? err.msg  : '服务器内部错误';
+    sendJson(ctx, {}, code, msg);
   }
 }
 

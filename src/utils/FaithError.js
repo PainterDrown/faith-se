@@ -1,9 +1,15 @@
+const getMessageByCode = require('./getMessageByCode');
+
 class FaithError extends Error {
   constructor(code, msg, stack) {
     super(msg);
-    this.msg = msg;
     this.code = code;
-    this.stack = stack;
+    if (!msg) {
+      this.msg = getMessageByCode(code);
+    } else {
+      this.msg = msg;
+      this.stack = stack;
+    }
   }
 }
 
