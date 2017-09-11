@@ -1,5 +1,5 @@
-const FaithError = require('../utils/FaithError');
-
-const redis = {};
+const redis = {
+  host: 'localhost',
+};
 
 exports = module.exports = redis;
