@@ -6,32 +6,32 @@ const validators = require('../services/validation/validators');
 
 function userRoutes() {
   const router = new Router();
-  router.get('/', uc.detail);
+  router.get('/', uc.index);
   return router.routes();
 }
 
-const router = new Router({ prefix: '/api/users' });
+const router = new Router({ prefix: '/api' });
 
 // 捕获user_id参数
 router.param('user_id',
   catchParam('user_id'),
-  toMiddleware(validators.getValidatorByFieldnames(['user_id']))
+  toMiddleware(validators.getValidatorByKeys(['user_id']))
 );
 
 // RESTful路由
-router.use('/:user_id', userRoutes());
+router.use('/users/:user_id', userRoutes());
 
 // 登陆
 router.post('/login',
-  toMiddleware(validators.getValidatorByFieldnames(['username', 'password'])),
+  toMiddleware(validators.getValidatorByKeys(['username', 'password'])),
   toMiddleware(uc.checkIfExist(['username'])),
-  toMiddleware(uc.checkIfCorrect(['password'])),
+  toMiddleware(uc.checkIfMatch(['password'])),
   uc.login
 );
 
 // 注册
 router.post('/enroll',
-  toMiddleware(validators.getValidatorByFieldnames(['username', 'password'])),
+  toMiddleware(validators.getValidatorByKeys(['username', 'password'])),
   toMiddleware(uc.checkIfUnique(['username'])),
   uc.enroll
 );

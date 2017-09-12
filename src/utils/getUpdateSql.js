@@ -1,12 +1,12 @@
-function getUpdateSql(info) {
+function getUpdateSql(obj) {
   let sql = '';
-  let hasFirstFieldname = false;
-  for (let fieldname in info) {
-    if (!hasFirstFieldname) {
-      sql += `${fieldname} = ?`;
-      hasFirstFieldname = true;
+  let hasFirstKey = false;
+  for (let key in obj) {
+    if (!hasFirstKey) {
+      sql += `${key} = ?`;
+      hasFirstKey = true;
     } else {
-      sql += `, ${fieldname} = ?`;
+      sql += `, ${key} = ?`;
     }
   }
   return sql;

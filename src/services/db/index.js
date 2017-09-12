@@ -22,7 +22,8 @@ async function queryDb(sql, values) {
   try {
     return await pool.queryAsync(sql, values);
   } catch (err) {
-    throw new FaithError(0, '数据库查询失败', err.stack);
+    console.log(sql, values);
+    throw new FaithError(0, '数据库查询失败', err);
   }
 };
 

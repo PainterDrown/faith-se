@@ -1,59 +1,89 @@
-const fm = require('../models/fund');
-const fnm = require('../models/fund_netvalue');
-const fam = require('../models/fund_asset');
-const fim = require('../models/fund_industry');
-const finm = require('../models/finance');
+const FundModl = require('../models/fund');
+const FnvlModl = require('../models/fund_netvalue');
+const FassModl = require('../models/fund_asset');
+const FidsModl = require('../models/fund_industry');
+const FincModl = require('../models/finance');
+const DateUtil = require('../utils/date');
+const NumbUtil = require('../utils/number');
+const FaithError = require('../utils/FaithError');
 const sendJson  = require('../utils/sendJson');
 const concurrent = require('../utils/concurrent');
 const { extract, pick, rename } = require('../utils');
 
-async function list(ctx, next) {
-  const fund_totalnum = await fm.countAllFunds();
-  const offset = ctx.param.page - 1;
-  const length = ctx.param.per_page;
-  if (offset + length > fund_totalnum) {
-    length = fund_totalnum - offset;
-  }
-  const funds = await fm.findFundsByFundIdRange(offset, length);
-  const fund_ids = extract('fund_id', funds);
-  const fund_netvalues = await fnm.findFundNetvaluesByFundIds(fund_ids);
-  for (const fund of fund) {
-    for (let fn of fund_netvalues) {
-      if (fund.fund_id === fn.fund_id) {
-        if (!fund.latest_netvalue || fund.latest_netvalue_date < fn.date) {
-          fund.latest_netvalue = fn.netvalue;
-          fund.latest_netvalue_date = fn.date;
-        }
-      }
-    }
-    fund.year_profit_rate = finm.calculate('year_profit_rate');
-    fund.total_profit_rate = finm.calculate('total_profit_rate');
-  }
-  sendJson(ctx, { funds, page_num });
-}
-
-async function detail(ctx, next) {
+async function get(ctx, next) {
   const [[fund], fund_netvalues, fund_assets, fund_industries] = await concurrent(
-    fm.findFundsByIds([ctx.param.fund_id]),
-    fnm.findLatest4FundNetvaluesByFundId(ctx.param.fund_id),
-    fam.findFundAssetsByFundId(ctx.param.fund_id),
-    fim.findFundIndustriesByFundId(ctx.param.fund_id)
+    FundModl.findFundsByIds([ctx.param.fund_id]),
+    FnvlModl.findLatestFundNetvaluesByFundId(ctx.param.fund_id),
+    FassModl.findFundAssetsByFundId(ctx.param.fund_id),
+    FidsModl.findFundIndustriesByFundId(ctx.param.fund_id)
   );
-  rename(['percentage'], ['value'], fund_assets);
-  rename(['percentage'], ['value'], fund_industries);
-  pick(['name', 'value'], fund_assets);
-  pick(['name', 'value'], fund_industries);
+  pick(['name', 'percentage'], fund_assets);
+  pick(['name', 'percentage'], fund_industries);
+  NumbUtil.divideSomeAttribute('percentage', 10000, fund_assets);
+  NumbUtil.divideSomeAttribute('percentage', 10000, fund_industries);
   sendJson(ctx, {
     name: fund.name,
-    netvalues: extract('netvalue', fund_netvalues),
-    raise_percentages:  extract('raise_percentage', fund_netvalues),
-    profit_rates: extract('profit_rate', fund_netvalues),
+    netvalues: extract('netvalue', fund_netvalues).slice(0, 4),
+    dates: DateUtil.toDateString(extract('date', fund_netvalues).slice(0, 4)),
+    raise_percentages: FincModl.calculate('raise_percentages'),
+    profit_rates: FincModl.calculate('profit_rates'),
     asset_allocation: fund_assets,
     industry_allocation: fund_industries,
   });
 }
 
+async function parse(ctx, next) {
+  ctx.param.page = parseInt(ctx.param.page);
+  ctx.param.per_page = parseInt(ctx.param.per_page);
+  // 确保参数为正数
+  if (ctx.param.page <= 0 || ctx.param.per_page <= 0) {
+    throw new FaithError(5);
+  }
+  let [{ count: total }] = await FundModl.countAllFunds();
+  total += 1;  // 数据库COUNT的结果要加上1
+  let length = ctx.param.per_page;
+  // 检查参数是否超出范围
+  const offset = (ctx.param.page - 1) * parseInt(ctx.param.per_page);
+  if (offset >= total) {
+    throw new FaithError(5);
+  }
+  if (offset + length > total) {
+    length = total - offset;
+  }
+  ctx.total = total;
+  ctx.param.offset = offset;
+  ctx.param.length = length;
+  return next();
+}
+
+async function list(ctx, next) {
+  const funds = await FundModl.findFundsByFundIdRange(ctx.param.offset, ctx.param.length);
+  DateUtil.attributeToDateString('found_date', funds);
+  DateUtil.attributeToDateString('latest_netvalue_date', funds);
+  for (const fund of funds) {
+    fund.year_profit_rate = FincModl.calculate('year_profit_rate');
+    fund.total_profit_rate = FincModl.calculate('total_profit_rate');
+  }
+  sendJson(ctx, { funds, total: ctx.param.total });
+}
+
+async function recommend(ctx, next) {
+  ctx.param.num = parseInt(ctx.param.num);
+  if (ctx.param.num <= 0) {
+    throw new FaithError(5, '参数必须为正数');
+  }
+  const funds = await FundModl.recommend(ctx.param.num);
+  for (const fund of funds) {
+    fund.forecast_profit_rate = FincModl.calculate('forecast_profit_rate');
+    fund.reason = 'i do not know why';  // modify
+    fund.star = 4.0 + Math.random();
+  }
+  sendJson(ctx, { funds });
+}
+
 exports = module.exports = {
+  get,
+  parse,
   list,
-  detail,
+  recommend,
 };
