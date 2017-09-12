@@ -19,8 +19,7 @@ code | msg
 	2. 前面有加✅的表示该api已经实现
 
 ### ✅1.1 登录
-	* method: POST
-	* url: api/login
+	* POST api/login
 	* req:
 		* username  {string}  用户名
 		* password  {string}  密码
@@ -28,8 +27,7 @@ code | msg
 		* user_id   {number}  用户ID
 
 ### ✅1.2 注册
-	* method: POST
-	* url: api/enroll
+	* POST api/enroll
 	* req:
 		* username
 		* password

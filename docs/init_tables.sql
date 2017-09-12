@@ -40,3 +40,8 @@ INSERT INTO fund_industry (fund_id, percentage, name) VALUES (3, 7000, 'faith_fu
 INSERT INTO fund_buy (user_id, fund_id, time, price, amount) VALUES (1, 1, '2017-09-01 00:00:00', 100.00, 100);
 INSERT INTO fund_buy (user_id, fund_id, time, price, amount) VALUES (1, 2, '2017-09-02 00:00:00', 200.00, 200);
 INSERT INTO fund_buy (user_id, fund_id, time, price, amount) VALUES (1, 3, '2017-09-03 00:00:00', 300.00, 300);
+
+-- fund_collection
+INSERT INTO fund_collection (user_id, fund_id) VALUES (1, 1);
+INSERT INTO fund_collection (user_id, fund_id) VALUES (1, 2);
+INSERT INTO fund_collection (user_id, fund_id) VALUES (1, 3);

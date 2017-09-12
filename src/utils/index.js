@@ -9,7 +9,7 @@ function rename(oldkeys, newkeys, objs) {
 
 function pick(keys, objs) {
   for (const obj of objs) {
-    for (const key of obj) {
+    for (const key in obj) {
       if (keys.indexOf(key) === -1) {
         delete obj[key];
       }
@@ -53,9 +53,9 @@ function sum(nums) {
   return result;
 }
 
-function catchParam(param_name) {
-  return async (param, ctx, next) => {
-    ctx.param[param_name] = param;
+function catchParam(key) {
+  return async (value, ctx, next) => {
+    ctx.param[key] = value;
     return next();
   }
 }

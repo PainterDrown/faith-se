@@ -123,7 +123,7 @@ function calculateIntervalRewardRate(Nb, Ne) {
 
 // test
 function calculate() {
-  return 0.22;
+  return 'i do not know, yet';
 }
 
 exports = module.exports = {

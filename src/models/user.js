@@ -2,14 +2,14 @@ const { queryDb } = require('../services/db');
 const getUpdateSql = require('../utils/getUpdateSql');
 const FaithError = require('../utils/FaithError');
 
-function findUsersBySomeField(fieldname, fieldvalues) {
+function findUsersBySomeField(key, fieldvalues) {
   const sql = `
   SELECT
     *
   FROM
     user
   WHERE
-    user.${fieldname} IN (?)
+    user.${key} IN (?)
   ;`;
   const values = [fieldvalues];
   return queryDb(sql, values);
@@ -43,20 +43,20 @@ function insertUser(user) {
 
 /**
  * @description 根据obj里面的字段去查询数据库中的用户
- * @param  {object} info 
+ * @param  {object} obj 
  */
-function findUserByInfo(info) {
+function findUserByObject(obj) {
   let conditions = '';
-  let hasFirstFieldname = false;
+  let hasFirstKey = false;
   const values = [];
-  for (let fieldname in info) {
-    if (hasFirstFieldname) {
-      conditions += ` OR user.${fieldname} = ?`;
+  for (let key in obj) {
+    if (hasFirstKey) {
+      conditions += ` OR user.${key} = ?`;
     } else {
-      conditions += `user.${fieldname} = ?`;
+      conditions += `user.${key} = ?`;
     }
-    values.push(info[fieldname]);
-    hasFirstFieldname = true;
+    values.push(obj[key]);
+    hasFirstKey = true;
   }
   const sql = `
   SELECT
@@ -69,12 +69,12 @@ function findUserByInfo(info) {
   return queryDb(sql, values);
 }
 
-function updateUser(user_id, info) {
+function updateUser(user_id, obj) {
   const values = [];
-  for (let fieldname in info) {
-    values.push(info[fieldname]);
+  for (let key in obj) {
+    values.push(obj[key]);
   }
-  const update_sql = getUpdateSql(info);
+  const update_sql = getUpdateSql(obj);
   if (update_sql === '') {
     throw new FaithError(0, '缺乏更新的参数');
   }
@@ -94,6 +94,6 @@ exports = module.exports = {
   findUsersByIds,
   findUsersByUsernames,
   insertUser,
-  findUserByInfo,
+  findUserByObject,
   updateUser,
 };

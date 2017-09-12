@@ -30,10 +30,12 @@ CREATE TABLE fund(
   manager      VARCHAR(32),
   mng_fee      FLOAT(10, 2),
   trs_fee      FLOAT(10, 2),
-  first_scale  INT,
-  last_scale   INT,
+  init_scale   INT,
+  latest_scale INT,
   latest_share INT,
   found_date   DATE,
+  latest_netvalue      FLOAT(10, 2),
+  latest_netvalue_date DATE,
   PRIMARY KEY(fund_id)
 );
 
@@ -72,6 +74,15 @@ CREATE TABLE fund_buy(
   price   FLOAT(10, 2),
   amount  INT,
   PRIMARY KEY(fb_id),
+  FOREIGN KEY(user_id) REFERENCES user(user_id),
+  FOREIGN KEY(fund_id) REFERENCES fund(fund_id)
+);
+
+CREATE TABLE fund_collection(
+  fc_id   INT AUTO_INCREMENT,
+  user_id INT,
+  fund_id INT,
+  PRIMARY KEY(fc_id),
   FOREIGN KEY(user_id) REFERENCES user(user_id),
   FOREIGN KEY(fund_id) REFERENCES fund(fund_id)
 );
