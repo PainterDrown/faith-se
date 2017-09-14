@@ -1,3 +1,4 @@
+const md5 = require('md5');
 const UserModl = require('../models/user');
 const FbuyModl = require('../models/fund_buy');
 const FnvlModl = require('../models/fund_netvalue');
@@ -6,91 +7,55 @@ const { queryDb } = require('../services/db');
 const FaithError = require('../utils/FaithError');
 const sendJson = require('../utils/sendJson');
 const concurrent = require('../utils/concurrent');
-const { sum, extract, filter, pick } = require('../utils');
-const validation = require('../services/validation');
-const chinese = require('../consts/chinese');
-
-function checkIfUnique(keys) {
-  return async (param) => {
-    const obj = {};
-    for (let key of keys) {
-      obj[key] = param[key];
-    }
-    const [user] = await UserModl.findUserByObject(obj);
-    if (user) {
-      for (let key of keys) {
-        if (param[key] === user[key]) {
-          throw new FaithError(4, `${chinese[key]}已被使用`);
-        }
-      }
-    }
-  };
-}
-
-function checkIfExist(keys) {
-  return async (param) => {
-    const obj = {};
-    for (let key of keys) {
-      obj[key] = param[key];
-    }
-    const [user] = await UserModl.findUserByObject(obj);
-    if (!user) {
-      throw new FaithError(6);
-    }
-    param.user = user;
-  };
-}
-
-function checkIfMatch(keys) {
-  return async (param) => {
-    for (let key of keys) {
-      if (param[key] !== param.user[key]) {
-        throw new FaithError(5, `${chinese[key]}错误`);
-      }
-    }
-  };
-}
-
-function login(ctx, next) {
-  sendJson(ctx, { user_id: ctx.param.user.user_id });
-  return next();
-}
-
-async function enroll(ctx, next) {
-  await UserModl.insertUser(ctx.param);
-  const [user] = await UserModl.findUsersByUsernames([ctx.param.username]);
-  sendJson(ctx, { user_id: user.user_id });
-  return next();
-}
+const DateUtil = require('../utils/date');
+const NumbUtil = require('../utils/number');
+const { sum, extract, filter, pick, rename } = require('../utils');
 
 async function getPersonalInfo(ctx) {
   const [user] = await UserModl.findUsersByIds([ctx.param.user_id]);
   filter(['password', 'tcode'], [user]);
   sendJson(ctx, { user });
+  return next();
 }
 
 async function getBoughtFunds(ctx) {
   const bought_funds = await FbuyModl.findFundBuysByUserId(ctx.param.user_id);
-  sendJson(ctx, { bought_funds });
+  rename(
+    ['name', 'latest_netvalue', 'share', 'valid_share', 'state'],
+    ['fund_name', 'fund_latest_netvalue', 'ship_share', 'ship_valid_share', 'ship_state'],
+    bought_funds
+  );
+  sendJson(ctx, { owned_funds: bought_funds });
+  return next();
 }
 
 async function getAssetInfo(ctx) {
-  const [[user], fund_buys, funds_netvalue_sum] = await concurrent(
+  const [[user], fund_buys, funds_netvalue_sum, collected_funds] = await concurrent(
     UserModl.findUsersByIds([ctx.param.user_id]),
     FbuyModl.findFundBuysByUserId(ctx.param.user_id),
-    FnvlModl.findUserFundsNetvalueSumByUserId(ctx.param.user_id)
+    FnvlModl.findUserFundsNetvalueSumByUserId(ctx.param.user_id),
+    FcltmModl.findFundCollectionByUserId(ctx.param.user_id)
   );
-  if (!user) {
-    throw new FaithError(6);
-  }
-  pick(['is_auth', 'savings']);
-  user.funds_netvalue_sum = funds_netvalue_sum;
+  pick(['is_auth', 'savings'], [user]);
+  NumbUtil.divideSomeAttribute('savings_rate', 1000, [user]);
+  DateUtil.attributeToDateString('savings_date', [user]);
+  user.funds_netvalue = funds_netvalue_sum;
   user.total_asset = ufn_sum + user.savings;
   user.total_profit = ufn_sum - sum(extract(fund_buys, 'cost'));
+  user.favorite = collected_funds;
+  rename(
+    ['savings_date', 'savings_rate'],
+    ['saving_date', 'saving_rate'],
+    [user]
+  );
   sendJson(ctx, { user });
+  return next();
 }
 
-async function index(ctx, next) {
+async function get(ctx, next) {
+  if (!ctx.param.info_type) {
+    throw new FaithError(2, `缺乏参数info_type`);
+  }
   switch (ctx.param.info_type) {
     case 'personal':
       await getPersonalInfo(ctx);
@@ -98,47 +63,82 @@ async function index(ctx, next) {
     case 'asset':
       await getAssetInfo(ctx);
       break;
-    case 'bought_fund':
+    case 'bought_funds':
       await getBoughtFunds(ctx);
       break;
-    case 'collected_funds':
-      await getCollectedFunds(ctx);
-      break;
     default:
-      throw new FaithError(2, `缺乏参数：info_type`);
+      throw new FaithError(2, `参数info_type错误`);
   }
   return next();
-  const [[user], , [{sum: ufn_sum}], collections] = await concurrent(
+}
 
-    FnvlModl.findUserFundsNetvalueSumByUserId(ctx.param.user_id),
-    FcltModl.findFundCollectionsByUserId(ctx.param.user_id)
-  );
+async function put(ctx, next) {
+  const user = {
+    phone: ctx.param.phone,
+    email: ctx.param.email,
+    address: ctx.param.address,
+  };
+  await UserModl.updateUser(parseInt(ctx.param.user_id), user);
+  return next();
+}
 
-  user.collections = collections;
-  
+async function signin(ctx, next) {
+  const [user] = await UserModl.findUsersByUsernames([username]);
+  if (!user) {
+    throw new FaithError(2, 'username不存在');
+  }
+  if (md5(ctx.param.password) !== user.password) {
+    throw new FaithError(2, 'password错误');
+  }
+  sendJson(ctx, { user_id: ctx.param.user.user_id });
+  return next();
+}
 
-  user.owned_funds = extract('fund_id', fund_buys);
-  sendJson(ctx, user);
+async function signup(ctx, next) {
+  let [user] = await UserModl.findUsersByUsernames([username]);
+  if (user) {
+    throw new FaithError(2, 'username已存在');
+  }
+  user = {
+    username: ctx.param.username,
+    password: md5(ctx.param.password),
+  }
+  await UserModl.insertUser(user);
+  [user] = await UserModl.findUsersByUsernames([ctx.param.username]);
+  sendJson(ctx, { user_id: user.user_id });
+  return next();
 }
 
 async function certificate(ctx, next) {
-  const user_id = ctx.param.user_id;
-  const keys = ['id', 'realname', 'bank_name', 'bank_area', 'bank_phone', 'bank_cardno', 'tcode'];
-  const obj = {};
-  for (const key of keys) {
-    obj[key] = ctx.param[key];
-  }
-  obj.is_auth = 1;
-  await checkIfMatch.updateUser(user_id, obj);
+  const user = {
+    is_auth: 1,
+    user_id:  ctx.param.user_id,
+    realname: ctx.param.realname,
+    bank_name: ctx.param.bankname,
+    bank_cardno: ctx.param.bankcard_no,
+    bank_phone: ctx.param.bankphone,
+    bank_area: ctx.param.bankarea,
+    tcode: ctx.param.tcode,
+  };
+  await UserModl.updateUser(ctx.param.user_id, user);
   sendJson(ctx, {});
+  return next();
+}
+
+async function consult(ctx, next) {
+  sendJson(ctx, {
+    description: `感谢您参与本次问卷填写。
+    根据投资者风险承受能力评估评分表的评价，您的风险承受能力为：稳健型。
+    风险中性投资者，具有一定的风险承受能力，希望可以获得较为稳健的投资回报。`
+  });
+  return next();
 }
 
 exports = module.exports = {
-  checkIfUnique,
-  checkIfExist,
-  checkIfMatch,
-  login,
-  enroll,
-  detail,
+  get,
+  put,
+  signin,
+  signup,
   certificate,
-}
+  consult,
+};

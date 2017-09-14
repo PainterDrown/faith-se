@@ -6,20 +6,16 @@
 
 code | msg
 ---- | -----------------
-0    | 服务器内部错误
-1    | ok
-2    | 缺乏参数
-3    | 参数格式出错
-4    | 参数已被使用
-5    | 参数错误（如密码错误）
-6    | 用户不存在
+0    | 正常
+1    | 服务器内部错误
+2    | 前端参数错误
 
 ## 2. API对接文档
 	1. {}表示类型描述，如{[number]}表示该数据是数组类型，数组成员是number类型
 	2. 前面有加✅的表示该api已经实现
 
 ### ✅1.1 登录
-	* POST api/login
+	POST api/login
 	* req:
 		* username  {string}  用户名
 		* password  {string}  密码
@@ -35,7 +31,7 @@ code | msg
 		* user_id
 
 ### ✅1.3 用户详情
-	* method: GET
+GET
 	* url: api/users/:user_id
 	* req: (null)
 	* res:

@@ -39,32 +39,9 @@ function extract(key, objs) {
   return results;
 }
 
-/**
- * @description 对对象数组中的某个对象属性求和
- * @param  {string}   key  属性名
- * @param  {[object]} objs 对象数组
- * @return {number} 
- */
-function sum(nums) {
-  let result = 0.00;
-  for (let num of nums) {
-    result += num;
-  }
-  return result;
-}
-
-function catchParam(key) {
-  return async (value, ctx, next) => {
-    ctx.param[key] = value;
-    return next();
-  }
-}
-
 exports = module.exports = {
   rename,
   pick,
   filter,
   extract,
-  sum,
-  catchParam,
 };
