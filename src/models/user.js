@@ -69,14 +69,14 @@ function findUserByObject(obj) {
   return queryDb(sql, values);
 }
 
-function updateUser(user_id, obj) {
+function updateUser(user_id, user) {
   const values = [];
-  for (let key in obj) {
-    values.push(obj[key]);
+  for (let key in user) {
+    values.push(user[key]);
   }
-  const update_sql = getUpdateSql(obj);
+  const update_sql = getUpdateSql(user);
   if (update_sql === '') {
-    throw new FaithError(0, '缺乏更新的参数');
+    throw new FaithError(0, '更新用户信息至少需要一个新参数');
   }
   const sql = `
   UPDATE

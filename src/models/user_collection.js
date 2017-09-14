@@ -1,20 +1,20 @@
 const { queryDb } = require('../services/db');
 
-function findFundBuysByUserId(user_id) {
+function findUserCollectionsByUserId(user_id) {
   const sql = `
   SELECT
-    fb.*
+    fund.*
   FROM
-    user,
-    fund_buy AS fb
+    user_collection AS uc,
+    fund
   WHERE
-    fb.user_id = ? AND
-    user.user_id = fb.user_id
+    uc.user_id = ? AND
+    uc.fund_id = fund.fund_id
   ;`;
   const values = [user_id];
   return queryDb(sql, values);
 }
 
 exports = module.exports = {
-  findFundBuysByUserId,
+  findUserCollectionsByUserId,
 };

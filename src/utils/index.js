@@ -32,32 +32,11 @@ function filter(keys, objs) {
  * @return {[any]} 
  */
 function extract(key, objs) {
-  const results = [];
-  for (let obj of objs) {
-    results.push(obj[key]);
-  }
-  return results;
-}
-
-/**
- * @description 对对象数组中的某个对象属性求和
- * @param  {string}   key  属性名
- * @param  {[object]} objs 对象数组
- * @return {number} 
- */
-function sum(nums) {
-  let result = 0.00;
-  for (let num of nums) {
-    result += num;
+  const result = [];
+  for (const obj of objs) {
+    result.push(obj[key]);
   }
   return result;
-}
-
-function catchParam(key) {
-  return async (value, ctx, next) => {
-    ctx.param[key] = value;
-    return next();
-  }
 }
 
 exports = module.exports = {
@@ -65,6 +44,4 @@ exports = module.exports = {
   pick,
   filter,
   extract,
-  sum,
-  catchParam,
 };

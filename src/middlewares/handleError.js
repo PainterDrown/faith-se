@@ -1,5 +1,5 @@
 const logger   = require('../utils/logger');
-const sendJson = require('../utils/sendJson');
+const { sendJson } = require('../utils/koa');
 
 /**
  * @description 统一的错误处理函数

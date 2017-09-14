@@ -25,8 +25,8 @@ function generateSchema(type, lowerbound, upperbound, regex) {
 const schemas = {};
 
 schemas.user_id     = generateSchema('number', 1, null);
-schemas.username    = generateSchema('string', 6, 32);
-schemas.password    = generateSchema('string', 1, 32);
+schemas.username    = generateSchema('string', 4, 32);
+schemas.password    = generateSchema('string', 4, 64);
 schemas.realname    = generateSchema('string', 1, 32);
 schemas.id          = generateSchema('string', 18, 18);
 schemas.email       = generateSchema('string', 1, 64);
