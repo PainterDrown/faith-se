@@ -1,10 +1,9 @@
 const UtrdModl = require('../models/user_trade');
 const FundModl = require('../models/fund');
-const sendJson  = require('../utils/sendJson');
+const { sendJson } = require('../utils/koa');
 const { rename } = require('../utils');
 const DateUtil = require('../utils/date');
 const NumbUtil = require('../utils/number');
-const { check: checkParam } = require('../services/validation');
 
 async function parse(ctx, next) {
   ctx.param.page = parseInt(ctx.param.page);

@@ -1,10 +1,10 @@
 const Router = require('koa-router');
-const { catchParam } = require('../utils');
+const { catchParam } = require('../utils/koa');
 const FundCtrl = require('../controllers/fund');
 
 // 挂载users的子路由
 function loadSubRouters(router) {
-  router.use(require('./fund_netvalues'));
+  router.use(require('./fund_netvalue'));
 }
 
 function fundRoutes() {

@@ -1,5 +1,5 @@
 const Router = require('koa-router');
-const { catchParam } = require('../utils');
+const { catchParam } = require('../utils/koa');
 const UserCtrl = require('../controllers/user');
 
 // 挂载users的子路由

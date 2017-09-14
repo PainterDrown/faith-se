@@ -99,7 +99,6 @@ async function soon(ctx, next) {
 
 exports = module.exports = {
   get,
-  getBankcards,
   parse,
   list,
   recommend,

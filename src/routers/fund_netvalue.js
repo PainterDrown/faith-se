@@ -7,3 +7,5 @@ router.get('/',
   FnvlCtrl.parse,
   FnvlCtrl.list
 );
+
+exports = module.exports = router.routes();

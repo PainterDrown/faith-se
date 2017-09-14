@@ -1,5 +1,5 @@
 const UbcrModl = require('../models/user_bankcard');
-const sendJson  = require('../utils/sendJson');
+const { sendJson } = require('../utils/koa');
 
 async function get(ctx, next) {
   const bankcards = await UbcrModl.findBankcardsByUserId(ctx.param.user_id);

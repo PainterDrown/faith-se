@@ -1,4 +1,4 @@
-const FaithError = require('../FaithError');
+const FaithError = require('./FaithError');
 
 function detach(middleware) {
   return async (ctx, next) => {
