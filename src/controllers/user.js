@@ -1,21 +1,31 @@
 const md5 = require('md5');
 const UserModl = require('../models/user');
-const FbuyModl = require('../models/fund_buy');
+const FundModl = require('../models/fund');
+const UtrdModl = require('../models/user_trade');
+const UcltModl = require('../models/user_collection');
 const FnvlModl = require('../models/fund_netvalue');
-const FcltModl = require('../models/fund_collection');
+const UbcrModl = require('../models/user_bankcard');
 const { queryDb } = require('../services/db');
 const FaithError = require('../utils/FaithError');
 const { sendJson } = require('../utils/koa');
 const concurrent = require('../utils/concurrent');
 const DateUtil = require('../utils/date');
 const NumbUtil = require('../utils/number');
-const { sum, extract, filter, pick, rename } = require('../utils');
+const { extract, filter, pick, rename } = require('../utils');
 
 async function getPersonalInfo(ctx) {
-  const [user] = await UserModl.findUsersByIds([ctx.param.user_id]);
+  const [[user], bankcards] = await concurrent(
+    UserModl.findUsersByIds([ctx.param.user_id]),
+    UbcrModl.findBankcardsByUserId(ctx.param.user_id)
+  );
+  rename(
+    ['bank_name', 'bank_phone', 'bank_area', 'number'],
+    ['bankname', 'bankphone', 'bankarea', 'bankcard_no'],
+    bankcards
+  );
+  user.owned_cards = bankcards;
   filter(['password', 'tcode'], [user]);
   sendJson(ctx, { user });
-  return next();
 }
 
 async function getBoughtFunds(ctx) {
@@ -26,30 +36,42 @@ async function getBoughtFunds(ctx) {
     bought_funds
   );
   sendJson(ctx, { owned_funds: bought_funds });
-  return next();
 }
 
 async function getAssetInfo(ctx) {
-  const [[user], fund_buys, funds_netvalue_sum, collected_funds] = await concurrent(
+  const [[user], user_trades, collected_funds] = await concurrent(
     UserModl.findUsersByIds([ctx.param.user_id]),
-    FbuyModl.findFundBuysByUserId(ctx.param.user_id),
-    FnvlModl.findUserFundsNetvalueSumByUserId(ctx.param.user_id),
-    FcltmModl.findFundCollectionByUserId(ctx.param.user_id)
+    UtrdModl.findUserTradesByUserId(ctx.param.user_id),
+    UcltModl.findUserCollectionsByUserId(ctx.param.user_id)
   );
-  pick(['is_auth', 'savings'], [user]);
-  NumbUtil.divideSomeAttribute('savings_rate', 1000, [user]);
+  let funds_netvalue = 0;
+  const funds = await FundModl.findFundsByIds(extract('fund_id', user_trades));
+  for (const ut of user_trades) {
+    for (const fund of funds) {
+      if (ut.fund_id === fund.fund_id) {
+        funds_netvalue += ut.amount * fund.latest_netvalue
+      }
+    }
+  }
+  filter(['password', 'tcode'], [user]);
   DateUtil.attributeToDateString('savings_date', [user]);
-  user.funds_netvalue = funds_netvalue_sum;
-  user.total_asset = ufn_sum + user.savings;
-  user.total_profit = ufn_sum - sum(extract(fund_buys, 'cost'));
+  DateUtil.attributeToDateString('found_date', collected_funds);
+  DateUtil.attributeToDateString('latest_netvalue_date', collected_funds);
+  user.funds_netvalue = funds_netvalue;
+  user.total_asset = funds_netvalue + user.savings;
+  user.total_profit = funds_netvalue - NumbUtil.sum(extract('turnover', user_trades));
   user.favorite = collected_funds;
   rename(
     ['savings_date', 'savings_rate'],
     ['saving_date', 'saving_rate'],
     [user]
   );
+  rename(
+    ['found_date', 'latest_netvalue'],
+    ['date', 'netvalue'],
+    collected_funds
+  );
   sendJson(ctx, { user });
-  return next();
 }
 
 async function get(ctx, next) {
@@ -83,19 +105,19 @@ async function put(ctx, next) {
 }
 
 async function signin(ctx, next) {
-  const [user] = await UserModl.findUsersByUsernames([username]);
+  const [user] = await UserModl.findUsersByUsernames([ctx.param.username]);
   if (!user) {
     throw new FaithError(2, 'username不存在');
   }
   if (md5(ctx.param.password) !== user.password) {
     throw new FaithError(2, 'password错误');
   }
-  sendJson(ctx, { user_id: ctx.param.user.user_id });
+  sendJson(ctx, { user_id: user.user_id });
   return next();
 }
 
 async function signup(ctx, next) {
-  let [user] = await UserModl.findUsersByUsernames([username]);
+  let [user] = await UserModl.findUsersByUsernames([ctx.param.username]);
   if (user) {
     throw new FaithError(2, 'username已存在');
   }
@@ -112,15 +134,21 @@ async function signup(ctx, next) {
 async function certificate(ctx, next) {
   const user = {
     is_auth: 1,
+    id: ctx.param.id,
     user_id:  ctx.param.user_id,
     realname: ctx.param.realname,
+    tcode: md5(ctx.param.tcode),
+  };
+  const bankcard = {
     bank_name: ctx.param.bankname,
-    bank_cardno: ctx.param.bankcard_no,
+    bankcard_no: ctx.param.bankcard_no,
     bank_phone: ctx.param.bankphone,
     bank_area: ctx.param.bankarea,
-    tcode: ctx.param.tcode,
-  };
-  await UserModl.updateUser(ctx.param.user_id, user);
+  }
+  await concurrent(
+    UserModl.updateUser(ctx.param.user_id, user),
+    UbcrModl.insertBankcard(ctx.param.user_id, bankcard)
+  );
   sendJson(ctx, {});
   return next();
 }

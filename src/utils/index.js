@@ -32,11 +32,11 @@ function filter(keys, objs) {
  * @return {[any]} 
  */
 function extract(key, objs) {
-  const results = [];
-  for (let obj of objs) {
-    results.push(obj[key]);
+  const result = [];
+  for (const obj of objs) {
+    result.push(obj[key]);
   }
-  return results;
+  return result;
 }
 
 exports = module.exports = {

@@ -19,10 +19,10 @@ function findUserFundsNetvalueSumByUserId(user_id) {
     SUM(fn.netvalue) AS sum
   FROM
     fund_netvalue AS fn,
-    fund_buy AS fb
+    user_trade AS ut
   WHERE
-    fb.user_id = ? AND
-    fb.fund_id = fn.fund_id
+    ut.user_id = ? AND
+    ut.fund_id = fn.fund_id
   ;`;
   const values = [user_id];
   return queryDb(sql, values);
