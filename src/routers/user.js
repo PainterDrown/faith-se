@@ -32,9 +32,14 @@ router.post('/signup',
   UserCtrl.signup
 );
 
-// 登陆
+// 登录
 router.post('/signin',
   UserCtrl.signin
+);
+
+// 退出登录
+router.get('/signout',
+  UserCtrl.signout
 );
 
 // 实名认证

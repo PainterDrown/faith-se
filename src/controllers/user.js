@@ -129,7 +129,14 @@ async function signin(ctx, next) {
   if (md5(ctx.param.password) !== user.password) {
     throw new FaithError(2, 'password错误');
   }
+  ctx.session.user_id = user.user_id;
   sendJson(ctx, { user_id: user.user_id });
+  return next();
+}
+
+async function signout(ctx, next) {
+  delete ctx.session.user_id;
+  sendJson(ctx, {});
   return next();
 }
 
@@ -180,6 +187,7 @@ exports = module.exports = {
   get,
   put,
   signin,
+  signout,
   signup,
   certificate,
   consult,
