@@ -122,8 +122,19 @@ function calculateIntervalRewardRate(Nb, Ne) {
 }
 
 // test
-function calculate() {
-  return 'i do not know, yet';
+function calculate(what) {
+  switch (what) {
+    case 'year_profit_rate':
+      return 0.0359 + Math.random() / 10;
+    case 'total_profit_rate':
+      return 0.0427 + Math.random() / 10;
+    case 'profit_rate':
+      return 0.0222 + Math.random() / 10;
+    case 'raise_percentage':
+      return 0.0111 +  Math.random() / 10;
+    default:
+      return 0.00;
+  }
 }
 
 exports = module.exports = {

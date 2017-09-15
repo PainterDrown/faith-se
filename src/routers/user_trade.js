@@ -1,24 +1,17 @@
 const Router = require('koa-router');
 const UtrdCtrl = require('../controllers/user_trade');
 
-function RESTfulRoutes() {
-  const router = new Router();
-  router.get('/',
-    UtrdCtrl.parse,
-    UtrdCtrl.list
-  );
-  router.post('/',
-    UtrdCtrl.buy
-  );
-  return router.routes();
-}
-
 const router = new Router({ prefix: '/trades' });
 
-router.use('/', RESTfulRoutes());
+// 获取用户购买记录
+router.get('/',
+  UtrdCtrl.parse,
+  UtrdCtrl.list
+);
 
-router.get('/fee',
-  UtrdCtrl.fees
+// 用户购买基金
+router.post('/',
+  UtrdCtrl.buy
 );
 
 exports = module.exports = router.routes();

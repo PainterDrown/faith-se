@@ -28,8 +28,15 @@ function attributeToDateString(key, objs) {
   }
 }
 
+function attributeToTimeString(key, objs) {
+  for (const obj of objs) {
+    obj[key] = toTimeString(obj[key]);
+  }
+}
+
 exports = module.exports = {
   toDateString,
   toTimeString,
   attributeToDateString,
+  attributeToTimeString,
 };

@@ -26,18 +26,7 @@ router.use('/:fund_id', fundRoutes());
 
 // 获取基金列表
 router.get('/',
-  FundCtrl.parse,
-  FundCtrl.list
-);
-
-// 获取基金推荐列表
-router.get('/recommendations',
-  FundCtrl.recommend
-);
-
-// 获取即将上市的基金列表
-router.get('/soon',
-  FundCtrl.soon
+  FundCtrl.index
 );
 
 exports = module.exports = router.routes();

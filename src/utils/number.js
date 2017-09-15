@@ -23,7 +23,7 @@ function sum(nums) {
 function parsePageAndPerPage(page, per_page, total) {
   let length = per_page;
   // 检查参数是否超出范围
-  const offset = (length - 1) * parseInt(per_page);
+  const offset = (page - 1) * parseInt(per_page);
   if (offset >= total) {
     throw new FaithError(2, `参数page或per_page太大`);
   }

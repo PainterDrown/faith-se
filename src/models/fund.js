@@ -5,7 +5,7 @@ function count() {
   SELECT
     COUNT(*) AS count
   FROM
-    user
+    fund
   ;`;
   return queryDb(sql, []);
 }

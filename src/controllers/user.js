@@ -29,13 +29,17 @@ async function getPersonalInfo(ctx) {
 }
 
 async function getBoughtFunds(ctx) {
-  const bought_funds = await FbuyModl.findFundBuysByUserId(ctx.param.user_id);
+  const bought_funds = await UtrdModl.findUserTradesByUserId(ctx.param.user_id, ctx.param.offset, ctx.param.length);
+  pick(['fund_id', 'name', 'latest_netvalue', 'amount', 'vamount', 'bankcard_no', 'ut_state'], bought_funds);
   rename(
-    ['name', 'latest_netvalue', 'share', 'valid_share', 'state'],
-    ['fund_name', 'fund_latest_netvalue', 'ship_share', 'ship_valid_share', 'ship_state'],
+    ['name',      'latest_netvalue',    'amount',     'vamount',          'bankcard_no',      'ut_state'],
+    ['fund_name', 'fund_last_netvalue', 'ship_share', 'ship_valid_share', 'ship_bankcard_no', 'ship_state'],
     bought_funds
   );
-  sendJson(ctx, { owned_funds: bought_funds });
+  sendJson(ctx, {
+    owned_funds: bought_funds,
+    log_num: ctx.param.total,
+  });
 }
 
 async function getAssetInfo(ctx) {
@@ -74,6 +78,17 @@ async function getAssetInfo(ctx) {
   sendJson(ctx, { user });
 }
 
+async function parse(ctx) {
+  ctx.param.user_id = parseInt(ctx.param.user_id);
+  ctx.param.page = parseInt(ctx.param.page);
+  ctx.param.per_page = parseInt(ctx.param.per_page);
+  let [{ count: total }] = await UtrdModl.countByUserId(ctx.param.user_id);
+  const { offset, length } = NumbUtil.parsePageAndPerPage(ctx.param.page, ctx.param.per_page, total);
+  ctx.param.offset = offset;
+  ctx.param.length = length;
+  ctx.param.total = total;
+}
+
 async function get(ctx, next) {
   if (!ctx.param.info_type) {
     throw new FaithError(2, `缺乏参数info_type`);
@@ -86,6 +101,7 @@ async function get(ctx, next) {
       await getAssetInfo(ctx);
       break;
     case 'bought_funds':
+      await parse(ctx);
       await getBoughtFunds(ctx);
       break;
     default:
@@ -101,6 +117,7 @@ async function put(ctx, next) {
     address: ctx.param.address,
   };
   await UserModl.updateUser(parseInt(ctx.param.user_id), user);
+  sendJson(ctx, {});
   return next();
 }
 
@@ -154,11 +171,8 @@ async function certificate(ctx, next) {
 }
 
 async function consult(ctx, next) {
-  sendJson(ctx, {
-    description: `感谢您参与本次问卷填写。
-    根据投资者风险承受能力评估评分表的评价，您的风险承受能力为：稳健型。
-    风险中性投资者，具有一定的风险承受能力，希望可以获得较为稳健的投资回报。`
-  });
+  const consult = require('../consts/consult');
+  sendJson(ctx, consult);
   return next();
 }
 

@@ -15,6 +15,30 @@ function findUserCollectionsByUserId(user_id) {
   return queryDb(sql, values);
 }
 
+function findByUserIdAndFundId(user_id, fund_id) {
+  const sql = `
+  SELECT
+    uc.*
+  FROM
+    user_collection AS uc
+  WHERE
+    uc.user_id = ? AND
+    uc.fund_id = ?
+  ;`;
+  const values = [user_id, fund_id];
+  return queryDb(sql, values);
+}
+
+function insert(user_id, fund_id) {
+  const sql = `
+  INSERT INTO user_collection (user_id, fund_id) VALUES (?, ?)
+  ;`;
+  const values = [user_id, fund_id];
+  return queryDb(sql, values);
+}
+
 exports = module.exports = {
   findUserCollectionsByUserId,
+  findByUserIdAndFundId,
+  insert,
 };

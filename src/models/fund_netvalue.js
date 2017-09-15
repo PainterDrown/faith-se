@@ -3,7 +3,7 @@ const { queryDb } = require('../services/db');
 function countByFundId(fund_id) {
   const sql = `
   SELECT
-    COUNT(fn) AS count
+    COUNT(fn.fn_id) AS count
   FROM
     fund_netvalue AS fn
   WHERE

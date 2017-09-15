@@ -7,13 +7,13 @@ const fees = {
   fund_purchase: {
     categories: ['0.0≤万元＜100.0', '100.0≤万元＜300.0', '300.0≤万元＜500.0', '500.0≤万元'],
     values: ['1.50%', '1.00%', '0.30%', '1000.0元'],
-    limitations: [],
+    limitations: ['10元', '/', '10元', '10元'],
   },
 
   fund_redeem: {
-    categories: [],
-    values: [],
-    limitations: [],
+    categories: ['0≤日＜7', '7≤日＜30', '30≤日＜365', '1≤年＜2', '2≤年'],
+    values: ['1.50%', '0.75%', '0.50%', '0.25%', '0.00%'],
+    limitations: ['1份', '1份'],
   },
 
   others: {
