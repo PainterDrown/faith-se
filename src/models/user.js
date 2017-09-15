@@ -76,7 +76,7 @@ function updateUser(user_id, user) {
   }
   const update_sql = getUpdateSql(user);
   if (update_sql === '') {
-    throw new FaithError(0, '更新用户信息至少需要一个新参数');
+    throw new FaithError(2, '更新用户信息至少需要一个新参数');
   }
   const sql = `
   UPDATE

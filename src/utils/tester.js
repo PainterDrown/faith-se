@@ -10,7 +10,7 @@ async function testMysql() {
     const conn = mysql.createConnection(mysql_options);
     conn.connect(function(err) {
       if (err) {
-        reject(new FaithError(0, 'MySQL数据库连接失败', err.stack));
+        reject(new FaithError(1, 'MySQL数据库连接失败', err.stack));
       } else {
         logger.log('MySQL数据库连接成功');
         conn.destroy();
@@ -29,7 +29,7 @@ async function testRedis() {
       resolve();
     })
     client.on('error', (err) => {
-      reject(new FaithError(0, 'Redis连接失败', err.stack));
+      reject(new FaithError(1, 'Redis连接失败', err.stack));
     });
   })
 }

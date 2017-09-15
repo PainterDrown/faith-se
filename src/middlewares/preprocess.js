@@ -1,5 +1,6 @@
 function accessControl(ctx) {
-  ctx.set("Access-Control-Allow-Origin", ctx.request.header.origin);
+  ctx.set('Access-Control-Allow-Origin', '*');
+  ctx.set('Access-Control-Allow-Method', '*');
 }
 
 function initParam(ctx) {
