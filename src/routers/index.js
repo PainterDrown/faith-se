@@ -1,9 +1,6 @@
-const userRoutes = require('./user');
-const fundRoutes = require('./fund');
-
 function loadRouters(app) {
-  app.use(userRoutes);
-  app.use(fundRoutes);
+  app.use(require('./user'));
+  app.use(require('./fund'));
 }
 
 exports = module.exports = {
