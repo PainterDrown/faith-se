@@ -27,7 +27,7 @@ function parsePageAndPerPage(page, per_page, total) {
   if (total === 0) {
     throw new FaithError(2, '记录数目为0');
   }
-  if (offset >= total) {
+  if (offset > total) {
     throw new FaithError(2, `参数page或per_page太大`);
   }
   if (offset + length > total) {
