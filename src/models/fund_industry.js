@@ -1,4 +1,4 @@
-const { queryDb } = require('../services/db');
+const { queryDB } = require('../services/db');
 
 function findFundIndustriesByFundId(fund_id) {
   const sql = `
@@ -10,7 +10,7 @@ function findFundIndustriesByFundId(fund_id) {
     fi.fund_id = ?
   ;`;
   const values = [fund_id];
-  return queryDb(sql, values);
+  return queryDB(sql, values);
 }
 
 exports = module.exports = {

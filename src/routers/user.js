@@ -37,11 +37,6 @@ router.post('/signin',
   UserCtrl.signin
 );
 
-// 退出登录
-router.get('/signout',
-  UserCtrl.signout
-);
-
 // 实名认证
 router.post('/certificate',
   UserCtrl.certificate

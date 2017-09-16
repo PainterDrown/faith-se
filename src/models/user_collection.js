@@ -1,4 +1,4 @@
-const { queryDb } = require('../services/db');
+const { queryDB } = require('../services/db');
 
 function findUserCollectionsByUserId(user_id) {
   const sql = `
@@ -12,7 +12,7 @@ function findUserCollectionsByUserId(user_id) {
     uc.fund_id = fund.fund_id
   ;`;
   const values = [user_id];
-  return queryDb(sql, values);
+  return queryDB(sql, values);
 }
 
 function findByUserIdAndFundId(user_id, fund_id) {
@@ -26,7 +26,7 @@ function findByUserIdAndFundId(user_id, fund_id) {
     uc.fund_id = ?
   ;`;
   const values = [user_id, fund_id];
-  return queryDb(sql, values);
+  return queryDB(sql, values);
 }
 
 function insert(user_id, fund_id) {
@@ -34,7 +34,7 @@ function insert(user_id, fund_id) {
   INSERT INTO user_collection (user_id, fund_id) VALUES (?, ?)
   ;`;
   const values = [user_id, fund_id];
-  return queryDb(sql, values);
+  return queryDB(sql, values);
 }
 
 exports = module.exports = {

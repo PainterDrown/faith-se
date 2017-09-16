@@ -10,7 +10,7 @@ async function handleError(ctx, next) {
   } catch (err) {
     logger.error(err);
     const code = err.code ? err.code : 2;
-    const msg  = code !== 1 ? err.msg  : '参数错误';
+    const msg  = code === 2 ? err.msg  : '参数错误';
     sendJson(ctx, {}, code, msg);
   }
 }

@@ -1,4 +1,4 @@
-const { queryDb } = require('../services/db');
+const { queryDB } = require('../services/db');
 const getUpdateSql = require('../utils/getUpdateSql');
 const FaithError = require('../utils/FaithError');
 
@@ -12,7 +12,7 @@ function findUsersBySomeField(key, fieldvalues) {
     user.${key} IN (?)
   ;`;
   const values = [fieldvalues];
-  return queryDb(sql, values);
+  return queryDB(sql, values);
 }
 
 /**
@@ -38,7 +38,7 @@ function insertUser(user) {
   INSERT INTO user (username, password) VALUES (?, ?)
   ;`;
   const values = [user.username, user.password];
-  return queryDb(sql, values);
+  return queryDB(sql, values);
 }
 
 /**
@@ -66,7 +66,7 @@ function findUserByObject(obj) {
   WHERE
     ${conditions}
   ;`;
-  return queryDb(sql, values);
+  return queryDB(sql, values);
 }
 
 function updateUser(user_id, user) {
@@ -87,7 +87,7 @@ function updateUser(user_id, user) {
     user.user_id = ?
   ;`;
   values.push(user_id);
-  return queryDb(sql, values);
+  return queryDB(sql, values);
 }
 
 exports = module.exports = {

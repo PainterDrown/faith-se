@@ -1,4 +1,4 @@
-const { queryDb } = require('../services/db');
+const { queryDB } = require('../services/db');
 
 function countByFundId(fund_id) {
   const sql = `
@@ -10,7 +10,7 @@ function countByFundId(fund_id) {
     fn.fund_id = ?
   ;`;
   const values = [fund_id];
-  return queryDb(sql, values);
+  return queryDB(sql, values);
 }
 
 function findUserFundsNetvalueSumByUserId(user_id) {
@@ -25,7 +25,7 @@ function findUserFundsNetvalueSumByUserId(user_id) {
     ut.fund_id = fn.fund_id
   ;`;
   const values = [user_id];
-  return queryDb(sql, values);
+  return queryDB(sql, values);
 }
 
 function findLatestFundNetvaluesByFundId(fund_id) {
@@ -39,7 +39,7 @@ function findLatestFundNetvaluesByFundId(fund_id) {
   ORDER BY fn.date DESC
   ;`;
   const values = [fund_id];
-  return queryDb(sql, values);
+  return queryDB(sql, values);
 }
 
 function findFundNetvaluesByFundId(fund_id) {
@@ -52,7 +52,7 @@ function findFundNetvaluesByFundId(fund_id) {
     fn.fund_id = ?
   ;`;
   const values = [fund_id];
-  return queryDb(sql ,values);
+  return queryDB(sql ,values);
 }
 
 function findFundNetvaluesByRange(fund_id, offset, length) {
@@ -66,7 +66,7 @@ function findFundNetvaluesByRange(fund_id, offset, length) {
   LIMIT ?, ?
   ;`;
   const values = [fund_id, offset, length];
-  return queryDb(sql, values);
+  return queryDB(sql, values);
 }
 
 exports = module.exports = {

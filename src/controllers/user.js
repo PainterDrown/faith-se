@@ -5,7 +5,7 @@ const UtrdModl = require('../models/user_trade');
 const UcltModl = require('../models/user_collection');
 const FnvlModl = require('../models/fund_netvalue');
 const UbcrModl = require('../models/user_bankcard');
-const { queryDb } = require('../services/db');
+const { queryDB } = require('../services/db');
 const FaithError = require('../utils/FaithError');
 const { sendJson } = require('../utils/koa');
 const concurrent = require('../utils/concurrent');
@@ -129,14 +129,7 @@ async function signin(ctx, next) {
   if (md5(ctx.param.password) !== user.password) {
     throw new FaithError(2, 'password错误');
   }
-  ctx.session.user_id = user.user_id;
   sendJson(ctx, { user_id: user.user_id });
-  return next();
-}
-
-async function signout(ctx, next) {
-  delete ctx.session.user_id;
-  sendJson(ctx, {});
   return next();
 }
 
@@ -187,7 +180,6 @@ exports = module.exports = {
   get,
   put,
   signin,
-  signout,
   signup,
   certificate,
   consult,

@@ -9,7 +9,7 @@ promisifyAll(require('mysql/lib/Pool').prototype);
 
 const pool = mysql.createPool(mysql_options);
 pool.on('error', (err) => {
-  throw new FaithError(1, '数据库连接失败', err.stack);
+  throw new FaithError(0, '数据库连接失败', err.stack);
 });
 
 /**
@@ -18,16 +18,16 @@ pool.on('error', (err) => {
  * @param  {[string]} values sql参数
  * @return {[object]}        查询结果
  */
-async function queryDb(sql, values) {
+async function queryDB(sql, values) {
   try {
     return await pool.queryAsync(sql, values);
   } catch (err) {
     console.log(err);
     console.log(sql, values);
-    throw new FaithError(1, '数据库查询失败', err);
+    throw new FaithError(0, '数据库查询失败', err);
   }
 };
 
 exports = module.exports = {
-  queryDb,
+  queryDB,
 };

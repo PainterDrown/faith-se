@@ -7,6 +7,7 @@ async function CORS(ctx, next) {
   ctx.set("Access-Control-Max-Age", 86400000);
   ctx.set("Access-Control-Allow-Methods", "OPTIONS, GET, PUT, POST, DELETE");
   ctx.set("Access-Control-Allow-Headers", "application/x-www-form-urlencoded, multipart/form-data, x-www-form-urlencoded, x-requested-with, accept, origin, content-type, Authorization");
+  return next();
 }
 
 exports = module.exports = CORS;

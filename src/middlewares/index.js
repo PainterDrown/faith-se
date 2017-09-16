@@ -7,7 +7,7 @@ function loadMiddlewares(app) {
   app.use(require('./handleError'));     // 处理错误
   app.use(require('./session')(app));    // session
   app.use(require('./CORS'));            // 解决CORS跨域问题
-  app.use(require('./initParam'));      // 预处理
+  app.use(require('./initParam'));       // 初始化参数
 }
 
 exports = module.exports = {

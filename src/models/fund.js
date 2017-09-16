@@ -1,4 +1,4 @@
-const { queryDb } = require('../services/db');
+const { queryDB } = require('../services/db');
 
 function count() {
   const sql = `
@@ -7,7 +7,7 @@ function count() {
   FROM
     fund
   ;`;
-  return queryDb(sql, []);
+  return queryDB(sql, []);
 }
 
 function findFundsByRange(offset, length) {
@@ -19,7 +19,7 @@ function findFundsByRange(offset, length) {
   LIMIT ?, ?
   ;`;
   const values = [offset, length];
-  return queryDb(sql, values);
+  return queryDB(sql, values);
 }
 
 function findFundsByIds(fund_ids) {
@@ -32,7 +32,7 @@ function findFundsByIds(fund_ids) {
     fund.fund_id IN (?)
   ;`;
   const values = [fund_ids];
-  return queryDb(sql, values);
+  return queryDB(sql, values);
 }
 
 exports = module.exports = {

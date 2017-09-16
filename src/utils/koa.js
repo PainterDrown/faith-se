@@ -7,11 +7,11 @@ function detach(middleware) {
       if (ret.catch)
         // 这里捕获异步中间件的错误
         ret.catch((err) => {
-          throw new FaithError(1, '异步中间件执行出错', err.stack);
+          throw new FaithError(0, '异步中间件执行出错', err.stack);
         });
     } catch(err) {
       // 这里捕获同步中间件的错误
-      throw new FaithError(1, '同步中间件执行出错', err.stack);
+      throw new FaithError(0, '同步中间件执行出错', err.stack);
     }
     return next();
   };
@@ -38,7 +38,7 @@ function sendJson(ctx, obj, code, msg) {
  */
 function toMiddleware(func) {
   if (typeof func !== 'function') {
-    throw new FaithError(1, '参数func的类型不是function');
+    throw new FaithError(0, '参数func的类型不是function');
   }
   return async (ctx, next) => {
     await func(ctx.param);

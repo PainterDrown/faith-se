@@ -1,4 +1,9 @@
 {
+  "name": "faith-se",
+  "version": "0.0.0",
+  "scripts": {
+    "start": "node src/server.js"
+  },
   "dependencies": {
     "eslint": "^4.6.1",
     "koa": "^2.3.0",

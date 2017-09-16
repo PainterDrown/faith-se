@@ -1,4 +1,4 @@
-const { queryDb } = require('../services/db');
+const { queryDB } = require('../services/db');
 
 function findBankcardsByUserId(user_id) {
   const sql = `
@@ -10,7 +10,7 @@ function findBankcardsByUserId(user_id) {
     ub.user_id = ?
   ;`;
   const values = [user_id];
-  return queryDb(sql, values);
+  return queryDB(sql, values);
 }
 
 function insertBankcard(user_id, bankcard) {
@@ -24,7 +24,7 @@ function insertBankcard(user_id, bankcard) {
     bankcard.bank_area,
     bankcard.bank_phone,
     bankcard.bankcard_no];
-  return queryDb(sql, values);
+  return queryDB(sql, values);
 }
 
 exports = module.exports = {

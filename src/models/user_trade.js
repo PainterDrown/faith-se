@@ -1,4 +1,4 @@
-const { queryDb } = require('../services/db');
+const { queryDB } = require('../services/db');
 const getUpdateSql = require('../utils/getUpdateSql');
 
 function findUserTradesByUserId(user_id, offset, length) {
@@ -19,7 +19,7 @@ function findUserTradesByUserId(user_id, offset, length) {
   ${limit}
   ;`;
   const values = [user_id];
-  return queryDb(sql, values);
+  return queryDB(sql, values);
 }
 
 function countByUserId(user_id) {
@@ -32,7 +32,7 @@ function countByUserId(user_id) {
     ut.user_id = ?
   ;`;
   const values = [user_id];
-  return queryDb(sql, values);
+  return queryDB(sql, values);
 }
 
 function insertTrade(trade) {
@@ -49,7 +49,7 @@ function insertTrade(trade) {
   const sql = `
   INSERT INTO user_trade (${fieldnames}) VALUES (${fieldvalues})
   ;`;
-  return queryDb(sql, values);
+  return queryDB(sql, values);
 }
 
 exports = module.exports = {
