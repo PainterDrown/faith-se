@@ -24,6 +24,9 @@ function parsePageAndPerPage(page, per_page, total) {
   let length = per_page;
   // 检查参数是否超出范围
   const offset = (page - 1) * parseInt(per_page);
+  if (total === 0) {
+    throw new FaithError(2, '记录数目为0');
+  }
   if (offset >= total) {
     throw new FaithError(2, `参数page或per_page太大`);
   }
