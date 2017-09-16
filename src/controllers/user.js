@@ -50,20 +50,14 @@ async function getAssetInfo(ctx) {
   );
   let funds_netvalue = 0;
   const fund_ids = extract('fund_id', user_trades);
-  let funds = [];
-  if (fund_ids.length !== 0) {
-    funds = [];
-  }
-  else {
-    funds = await FundModl.findFundsByIds();
-    for (const ut of user_trades) {
-      for (const fund of funds) {
-        if (ut.fund_id === fund.fund_id) {
-          funds_netvalue += ut.amount * fund.latest_netvalue
-        }
+  const funds =  await FundModl.findFundsByIds();
+  for (const ut of user_trades) {
+    for (const fund of funds) {
+      if (ut.fund_id === fund.fund_id) {
+        funds_netvalue += ut.amount * fund.latest_netvalue
       }
     }
-  }
+  };
   filter(['password', 'tcode'], [user]);
   DateUtil.attributeToDateString('savings_date', [user]);
   DateUtil.attributeToDateString('found_date', collected_funds);

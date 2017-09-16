@@ -23,6 +23,9 @@ function findFundsByRange(offset, length) {
 }
 
 function findFundsByIds(fund_ids) {
+  if (!fund_ids || fund_ids.length === 0) {
+    return [];
+  }
   const sql = `
   SELECT
     fund.*
